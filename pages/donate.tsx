@@ -12,7 +12,7 @@ export default function DonationPage() {
                     <DonateOption name="Bunq" link="https://bunq.me/mjarkk" />
                 </div>
                 <p>If there is enough support i can maybe also add support for newer and/or older bikes</p>
-                <Link href="/"><a>Back to homepage</a></Link>
+                <Link href="/">Back to homepage</Link>
             </main>
             <Footer noDonate />
             <style jsx>{`

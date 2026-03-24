@@ -1,4 +1,4 @@
-import { MouseEventHandler, useState } from 'react'
+import { KeyboardEventHandler, MouseEventHandler, useState } from 'react'
 import { BikeCredentials } from '../lib/bike'
 import { Button } from './Button'
 import { MaterialMoreVert } from './icons/MaterialMoreVert'
@@ -59,10 +59,18 @@ export interface BikeProps {
 function Bike({ bike, onSelect, onDelete }: BikeProps) {
     const [showOptions, setShowOptions] = useState(false)
 
-    const clickOptions: MouseEventHandler<HTMLButtonElement> = (e) => {
+    const clickOptions: MouseEventHandler<HTMLDivElement> = (e) => {
         e.preventDefault()
         e.stopPropagation()
         setShowOptions(true)
+    }
+
+    const keyOptions: KeyboardEventHandler<HTMLDivElement> = (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            e.stopPropagation()
+            setShowOptions(true)
+        }
     }
 
     const onDeleteProxy = () => {
@@ -93,9 +101,9 @@ function Bike({ bike, onSelect, onDelete }: BikeProps) {
                     </div>
                 </div>
                 <div className='options'>
-                    <button className='option' onClick={clickOptions}>
+                    <div className='option' role='button' tabIndex={0} onClick={clickOptions} onKeyDown={keyOptions}>
                         <MaterialMoreVert size={22} />
-                    </button>
+                    </div>
                 </div>
             </div>
             <style jsx>{`

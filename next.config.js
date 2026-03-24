@@ -1,10 +1,26 @@
-const withPWA = require("next-pwa");
+const withPWA = require("@ducanh2912/next-pwa").default;
 
 const env = process.env.NODE_ENV;
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  turbopack: {
+    root: __dirname,
+  },
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Permissions-Policy',
+            value: 'bluetooth=self',
+          },
+        ],
+      },
+    ]
+  },
   async rewrites() {
     return {
       beforeFiles: [
@@ -30,9 +46,10 @@ const nextConfig = {
       ],
     };
   },
-  pwa: {
-    dest: "public",
-  },
 };
 
-module.exports = env === "development" ? nextConfig : withPWA(nextConfig);
+const pwaConfig = withPWA({
+  dest: "public",
+});
+
+module.exports = env === "development" ? nextConfig : pwaConfig(nextConfig);

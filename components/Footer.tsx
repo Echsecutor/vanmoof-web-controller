@@ -9,9 +9,7 @@ export function Footer({ noDonate }: FooterProps) {
         <footer>
             <div>
                 <a href="https://github.com/mjarkk/vanmoof-web-controller">Source code</a>
-                {noDonate ? undefined : <Link href="/donate">
-                    <a>Donate!</a>
-                </Link>}
+                {noDonate ? undefined : <Link href="/donate">Donate!</Link>}
             </div>
             <div>
                 <b>NOT</b> an offical VanMoof service/product!

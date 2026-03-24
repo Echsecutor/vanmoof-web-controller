@@ -86,7 +86,8 @@ const Home: NextPage = () => {
                 alt="Site preview"
                 src={screenshotLight}
                 placeholder='blur'
-                layout="responsive"
+                sizes="(max-width: 400px) 100vw, 400px"
+                style={{ width: '100%', height: 'auto' }}
               />
             </div>
             <div className='previewDark'>
@@ -94,7 +95,8 @@ const Home: NextPage = () => {
                 alt="Site preview"
                 src={screenshotDark}
                 placeholder='blur'
-                layout="responsive"
+                sizes="(max-width: 400px) 100vw, 400px"
+                style={{ width: '100%', height: 'auto' }}
               />
             </div>
           </>

@@ -73,14 +73,23 @@ export class Bike {
         return decryptedValue.reverse()
     }
 
+    private async ensureConnected(): Promise<void> {
+        if (!this.server.connected) {
+            console.log('GATT server disconnected, reconnecting...')
+            await this.server.connect()
+        }
+    }
+
     private async bluetoothReadWithoutQueue(characteristic: Characteristic, decrypt = true): Promise<Uint8Array> {
         let lastError: any;
         for (let retry = 0; retry < 5; retry++) {
             if (retry != 0) {
                 console.log('retrying to read bluetooth value, attempt:', retry)
+                await wait(300 * retry)
             }
 
             try {
+                await this.ensureConnected()
                 const bluetoothService = await this.server.getPrimaryService(characteristic.service)
                 const bluetoothCharacteristic = await bluetoothService.getCharacteristic(characteristic.id)
                 const buff = await bluetoothCharacteristic.readValue()
@@ -98,10 +107,25 @@ export class Bike {
     }
 
     private async bluetoothWriteWithoutQueue(characteristic: Characteristic, data: Uint8Array, encrypted = true) {
-        const payload = encrypted ? await this.makeEncryptedPayloadWithoutQueue(data) : data
-        const bluetoothService = await this.server.getPrimaryService(characteristic.service)
-        const bluetoothCharacteristic = await bluetoothService.getCharacteristic(characteristic.id)
-        await bluetoothCharacteristic.writeValue(payload)
+        let lastError: any
+        for (let retry = 0; retry < 5; retry++) {
+            if (retry != 0) {
+                console.log('retrying to write bluetooth value, attempt:', retry)
+                await wait(300 * retry)
+            }
+
+            try {
+                await this.ensureConnected()
+                const payload = encrypted ? await this.makeEncryptedPayloadWithoutQueue(data) : data
+                const bluetoothService = await this.server.getPrimaryService(characteristic.service)
+                const bluetoothCharacteristic = await bluetoothService.getCharacteristic(characteristic.id)
+                await bluetoothCharacteristic.writeValue(payload)
+                return
+            } catch (e) {
+                lastError = e
+            }
+        }
+        throw lastError
     }
 
     private async bluetoothWrite(characteristic: Characteristic, data: Uint8Array, encrypted = true) {
